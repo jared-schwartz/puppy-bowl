@@ -1,14 +1,30 @@
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
-const cohortName = "YOUR COHORT NAME HERE";
+const cohortName = "2408-FTB-MT-WEB-PT";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
 
 /**
  * Fetches all players from the API.
  * @returns {Object[]} the array of player objects
  */
+
+async function jsonFetch()
+{
+  let data = await fetch(`${API_URL}/players`)
+  let json = await data.json();
+  return json;
+}
+
 const fetchAllPlayers = async () => {
   try {
+    const ret = [];
+    let json = await jsonFetch();
+    for (let i = 0; i < json.data.players.length; i++)
+    {
+      let player = json.data.players[i];
+      ret.push(player);
+    }
+    return ret;
     // TODO
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
