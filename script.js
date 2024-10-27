@@ -9,11 +9,19 @@ const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
  */
 const fetchAllPlayers = async () => {
   try {
-    // TODO
+    const response = await fetch (`${API_URL}/players`);
+    if (!response.ok) {
+      throw new Error("Response not ok");
+    }
+    const data = await response.json();
+    console.log(data);
+    return data.players || [];
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
+    return [];
   }
 };
+
 
 /**
  * Fetches a single player from the API.
@@ -22,7 +30,12 @@ const fetchAllPlayers = async () => {
  */
 const fetchSinglePlayer = async (playerId) => {
   try {
-    // TODO
+    const response = await fetch (`${API_URL}/${playerId}`);
+    if (!response.ok) {
+      throw new Error("Response not ok");
+    }
+    const data = await response.json();
+    return data.player;
   } catch (err) {
     console.error(`Oh no, trouble fetching player #${playerId}!`, err);
   }
@@ -40,7 +53,7 @@ const addPlayer = async (playerObj) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(playerData),
+      body: JSON.stringify(playerObj),
     });
 
     const addedPlayer = await response.json(); 
@@ -50,8 +63,6 @@ const addPlayer = async (playerObj) => {
     console.error('Whoops, trouble adding the player!', err);
   }
 };
-
-
 /**
  * Removes a player from the roster via the API.
  * @param {number} playerId the ID of the player to remove
@@ -59,7 +70,7 @@ const addPlayer = async (playerObj) => {
 
 const removePlayer = async (playerId) => {
   try {
-    const response = await fetch(`${API_URL}/${playerId}`, {
+    const response = await fetch(`${API_URL}/players/${playerId}`, {
       method: 'DELETE',
     });
     }
@@ -91,7 +102,45 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 const renderAllPlayers = (playerList) => {
-  // TODO
+  const main = document.querySelector('main');
+  main.innerHTML = '';
+
+// Create Player Card
+  playerList.forEach(player => {
+    const playerCard = document.createElement('div');
+    playerCard.classList.add('player-card');
+// Add Player Name
+    const playerName = document.createElement('h2')
+    playerName.textContent = player.name;
+    playerCard.appendChild(playerName)
+// Add Player ID
+    const playerId = document.createElement('p');
+    playerId.textContent = `ID: ${player.id}`;
+    playerCard.appendChild(playerId);
+// Player Image with alt text
+    const playerImage = document.createElement('img');
+    playerImage.src = player.imageUrl;
+    playerImage.alt = player.name;
+    playerCard.appendChild(playerImage);
+// Player details button
+    const seeDetailsButton = document.createElement('button');
+    seeDetailsButton.textContent = 'See Details!';
+    seeDetailsButton.addEventListener('click', () => {
+      renderSinglePlayer(player.id);
+    });
+    playerCard.appendChild(seeDetailsButton);
+// Remove player button
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove from roster';
+    removeButton.addEventListener('click', async () => {
+      await removePlayer(player.id);
+      const updatedPlayers = await fetchAllPlayers();
+      renderAllPlayers(updatedPlayers);
+    });
+    playerCard.appendChild(removeButton);
+
+    main.appendChild(playerCard);
+  });
 };
 
 /**
