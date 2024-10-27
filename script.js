@@ -1,6 +1,6 @@
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
-const cohortName = "YOUR COHORT NAME HERE";
+const cohortName = "2408-FTB-MT-WEB-PT";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
 
 /**
@@ -45,10 +45,14 @@ const addNewPlayer = async (playerObj) => {
  * Removes a player from the roster via the API.
  * @param {number} playerId the ID of the player to remove
  */
+
 const removePlayer = async (playerId) => {
   try {
-    // TODO
-  } catch (err) {
+    const response = await fetch(`${API_URL}/${playerId}`, {
+      method: 'DELETE',
+    });
+    }
+  catch (err) {
     console.error(
       `Whoops, trouble removing player #${playerId} from the roster!`,
       err
