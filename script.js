@@ -33,13 +33,24 @@ const fetchSinglePlayer = async (playerId) => {
  * @param {Object} playerObj the player to add
  * @returns {Object} the player returned by the API
  */
-const addNewPlayer = async (playerObj) => {
+const addPlayer = async (playerObj) => {
   try {
-    // TODO
+    const response = await fetch(`${API_URL}/players`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(playerData),
+    });
+
+    const addedPlayer = await response.json(); 
+    return addedPlayer; 
+
   } catch (err) {
-    console.error("Oops, something went wrong with adding that player!", err);
+    console.error('Whoops, trouble adding the player!', err);
   }
 };
+
 
 /**
  * Removes a player from the roster via the API.
