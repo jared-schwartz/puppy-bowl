@@ -3,24 +3,27 @@
 const cohortName = "2408-FTB-MT-WEB-PT";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
 
+const players = [];
 /**
  * Fetches all players from the API.
  * @returns {Object[]} the array of player objects
- */
+*/
 const fetchAllPlayers = async () => {
   try {
     const response = await fetch (`${API_URL}/players`);
     if (!response.ok) {
       throw new Error("Response not ok");
     }
-    const data = await response.json();
-    console.log(data);
-    return data.players || [];
+    const obj = await response.json();
+    console.log(obj.data);
+    console.log (players);
+    return obj.data.players || [];
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
     return [];
   }
 };
+ 
 
 
 /**
@@ -102,7 +105,7 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 const renderAllPlayers = (playerList) => {
-  const main = document.querySelector('main');
+  const main = document.querySelector('.main');
   main.innerHTML = '';
 
 // Create Player Card
@@ -113,10 +116,6 @@ const renderAllPlayers = (playerList) => {
     const playerName = document.createElement('h2')
     playerName.textContent = player.name;
     playerCard.appendChild(playerName)
-// Add Player ID
-    const playerId = document.createElement('p');
-    playerId.textContent = `ID: ${player.id}`;
-    playerCard.appendChild(playerId);
 // Player Image with alt text
     const playerImage = document.createElement('img');
     playerImage.src = player.imageUrl;
