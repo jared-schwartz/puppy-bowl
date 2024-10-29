@@ -28,6 +28,15 @@ describe("fetchAllPlayers", () => {
 });
 
 // TODO: Tests for `fetchSinglePlayer`
+describe("fetchSinglePlayer", () => {
+    let player;
+  beforeAll(async () => {
+    player = await fetchSinglePlayer(16192);
+  })
+  test("returns a player", async () => {
+    expect(player).toHaveProperty("name");
+  })
+})
 
 // TODO: Tests for `addNewPlayer`
 
