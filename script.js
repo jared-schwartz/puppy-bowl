@@ -33,14 +33,16 @@ const fetchAllPlayers = async () => {
  */
 const fetchSinglePlayer = async (playerId) => {
   try {
-    const response = await fetch (`${API_URL}/${playerId}`);
+    const response = await fetch (`${API_URL}/players/${playerId}`);
     if (!response.ok) {
       throw new Error("Response not ok");
     }
-    const data = await response.json();
-    return data.player;
+    const obj = await response.json();
+    //console.log(data.data.player);
+    return obj.data.player || [];
   } catch (err) {
     console.error(`Oh no, trouble fetching player #${playerId}!`, err);
+    return [];
   }
 };
 
@@ -124,8 +126,9 @@ const renderAllPlayers = (playerList) => {
 // Player details button
     const seeDetailsButton = document.createElement('button');
     seeDetailsButton.textContent = 'See Details!';
-    seeDetailsButton.addEventListener('click', () => {
-      renderSinglePlayer(player.id);
+    seeDetailsButton.addEventListener('click', async () => {
+      const playerInfo = await fetchSinglePlayer(player.id);
+      renderSinglePlayer(playerInfo);
     });
     playerCard.appendChild(seeDetailsButton);
 // Remove player button
@@ -156,7 +159,40 @@ const renderAllPlayers = (playerList) => {
  * @param {Object} player an object representing a single player
  */
 const renderSinglePlayer = (player) => {
-  // TODO
+  console.log(player);
+  const main = document.querySelector('.main');
+  main.innerHTML = '';
+
+// Player card
+  const playerCard = document.createElement('div');
+  playerCard.classList.add('player-card');
+// Player Name
+  const playerName = document.createElement('h2');
+  playerName.textContent = `${player.name}`;
+  playerCard.appendChild(playerName);
+// Player Breed
+  const playerBreed = document.createElement('p');
+  playerBreed.textContent = `Breed: ${player.breed}`;
+  playerCard.appendChild(playerBreed);
+// Player Status
+  const playerStatus = document.createElement('p');
+  playerStatus.textContent = `Status: ${player.status}`;
+  playerCard.appendChild(playerStatus);
+// Player Image
+  const playerImage = document.createElement('img');
+  playerImage.src = player.imageUrl;
+  playerImage.alt = player.name;
+  playerCard.appendChild(playerImage);
+
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back to all players';
+  backButton.addEventListener('click', async ()=>{
+    const allPlayers = await fetchAllPlayers();
+    renderAllPlayers(allPlayers);
+  });
+  playerCard.appendChild(backButton);
+
+  main.appendChild(playerCard);
 };
 
 /**
@@ -166,7 +202,25 @@ const renderSinglePlayer = (player) => {
  */
 const renderNewPlayerForm = () => {
   try {
-    // TODO
+    const form = document.getElementById("new-player-form");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const newPlayer = {
+        name: document.getElementById("playerName").value,
+        image: document.getElementById("playerImage").value,
+        breed: document.getElementById("playerBreed").value,
+      };
+
+      await addPlayer(newPlayer);
+
+      const allPlayers = await fetchAllPlayers();
+
+      renderAllPlayers(allPlayers);
+
+      form.reset();
+    });
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
   }
@@ -189,7 +243,7 @@ if (typeof window === "undefined") {
   module.exports = {
     fetchAllPlayers,
     fetchSinglePlayer,
-    addNewPlayer,
+    addPlayer,
     removePlayer,
     renderAllPlayers,
     renderSinglePlayer,
