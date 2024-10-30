@@ -8,11 +8,16 @@ const {
   renderNewPlayerForm,
 } = require("./script");
 
+
+
 describe("fetchAllPlayers", () => {
   // Make the API call once before all the tests run
   let players;
   beforeAll(async () => {
+    const fetchAllPlayersData = {data:{players: [{ id: 1, name: "Item One" }, { id: 2, name: "Item Two" }, ]}}; 
+    global.fetch = jest.fn(() => Promise.resolve({ ok : true,json: () => Promise.resolve(fetchAllPlayersData), }) );
     players = await fetchAllPlayers();
+    console.log(players);
   });
 
   test("returns an array", async () => {
@@ -26,18 +31,25 @@ describe("fetchAllPlayers", () => {
     });
   });
 });
-
 // TODO: Tests for `fetchSinglePlayer`
-describe("fetchSinglePlayer", () => {
-    let player;
+
+describe("fetchSinglePlayer", ()=> {
+  let player;
   beforeAll(async () => {
-    player = await fetchSinglePlayer(16192);
+    const Data = {data:{player: {id: 1, name:""}}};
+    global.fetch = jest.fn(() => Promise.resolve({ ok : true,json: () => Promise.resolve(Data), }));
+    player = await fetchSinglePlayer(1);
   })
-  test("returns a player", async () => {
+  test("returns player with id and name", async () => {
     expect(player).toHaveProperty("name");
+    expect(player).toHaveProperty("id");
   })
 })
 
 // TODO: Tests for `addNewPlayer`
+describe("addNewPlayer", ()=> {
+  let player;
+  beforeAll()
+})
 
 // (Optional) TODO: Tests for `removePlayer`

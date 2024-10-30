@@ -14,10 +14,11 @@ const fetchAllPlayers = async () => {
     if (!response.ok) {
       throw new Error("Response not ok");
     }
+
     const obj = await response.json();
-    console.log(obj.data);
-    console.log (players);
-    return obj.data.players || [];
+    //console.log(obj.data.players)
+    return obj.data.players;
+    
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
     return [];
