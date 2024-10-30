@@ -46,10 +46,16 @@ describe("fetchSinglePlayer", ()=> {
   })
 })
 
-// TODO: Tests for `addNewPlayer`
-describe("addNewPlayer", ()=> {
+// TODO: Tests for `addPlayer`
+describe("addPlayer", ()=> {
   let player;
-  beforeAll()
+  let Oplayer = {data:{player:{}}}
+  beforeAll(async () => {
+    player = await addPlayer(Oplayer)
+  })
+  test("is post", async () => {
+    expect(player).toBe(Object);
+  })
 })
 
 // (Optional) TODO: Tests for `removePlayer`
